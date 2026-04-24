@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AlfaNet - Aulas Interativas</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Arial, Helvetica, sans-serif;
+            background-color: #f5f9f5;
+            color: #333;
+        }
+
+        /* BARRA SUPERIOR */
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #1b5e20;
+            padding: 15px 20px;
+            flex-wrap: wrap;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .logo {
+            color: white;
+            font-size: 24px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .menu {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .menu button {
+            background-color: transparent;
+            border: none;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            padding: 8px 12px;
+            border-radius: 6px;
+            transition: 0.3s;
+            font-weight: 500;
+        }
+
+        .menu button:hover {
+            background-color: #2e7d32;
+            transform: translateY(-2px);
+        }
+
+        /* CONTEÚDO PRINCIPAL */
+        .container {
+            max-width: 1300px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .page-title {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .page-title h1 {
+            color: #1b5e20;
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+        }
+
+        .page-title p {
+            color: #666;
+            font-size: 1.1rem;
+        }
+
+        /* GRADE DE MÓDULOS */
+        .modules-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 30px;
+            margin-bottom: 50px;
+        }
+
+        /* CARD DO MÓDULO */
+        .module-card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+            overflow: hidden;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+
+        .module-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 30px rgba(27,94,32,0.2);
+            border-color: #4caf50;
+        }
+
+        .module-card.expanded {
+            transform: translateY(0);
+            border-color: #1b5e20;
+            box-shadow: 0 20px 35px rgba(0,0,0,0.15);
+        }
+
+        .card-preview {
+            padding: 35px 25px;
+            text-align: center;
+            background: linear-gradient(135deg, #ffffff 0%, #f9fff9 100%);
+        }
+
+        .module-icon {
+            font-size: 3.5rem;
+            margin-bottom: 15px;
+        }
+
+        .module-card h3 {
+            color: #1b5e20;
+            font-size: 1.6rem;
+            margin-bottom: 12px;
+            font-weight: 700;
+        }
+
+        .module-description {
+            color: #666;
+            font-size: 0.95rem;
+            line-height: 1.4;
+            margin-bottom: 15px;
+        }
+
+        .module-badge {
+            display: inline-block;
+            background-color: #e8f5e9;
+            color: #2e7d32;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .expand-hint {
+            margin-top: 15px;
+            font-size: 0.75rem;
+            color: #8ba88e;
+        }
+
+        .card-expanded {
+            display: none;
+            background: #fafafa;
+            border-top: 1px solid #e0e0e0;
+            padding: 20px;
+        }
+
+        .module-card.expanded .card-expanded {
+            display: block;
+        }
+
+        .video-container {
+            position: relative;
+            width: 100%;
+            padding-bottom: 56.25%;
+            height: 0;
+            overflow: hidden;
+            border-radius: 12px;
+            background: #000;
+        }
+
+        .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+            border-radius: 12px;
+        }
+
+        .video-caption {
+            margin-top: 12px;
+            font-size: 0.85rem;
+            color: #555;
+            text-align: center;
+        }
+
+        .close-video-btn {
+            display: block;
+            width: 100%;
+            margin-top: 15px;
+            background-color: #ff5722;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+
+        .close-video-btn:hover {
+            background-color: #e64a19;
+            transform: scale(1.02);
+        }
+
+        .module-card {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+
+        .module-card.revealed {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        @media (max-width: 768px) {
+            .modules-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .page-title h1 {
+                font-size: 1.8rem;
+            }
+            
+            .card-preview {
+                padding: 25px 20px;
+            }
+        }
+
+        .footer-note {
+            text-align: center;
+            padding: 30px 20px 40px;
+            font-size: 0.85rem;
+            color: #8ba88e;
+            border-top: 1px solid #e0f0e0;
+            margin-top: 20px;
+        }
+
+        /* JANELA DE AVISO DISCRETA (FECHÁVEL) */
+        .notice-modal {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 280px;
+            background: linear-gradient(135deg, #fff9c4 0%, #fff3e0 100%);
+            border-left: 4px solid #ff9800;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+            z-index: 10000;
+            animation: slideInRight 0.3s ease-out;
+        }
+
+        @keyframes slideInRight {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .notice-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 15px 8px 15px;
+            border-bottom: 1px solid rgba(255, 152, 0, 0.3);
+        }
+
+        .notice-title {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.85rem;
+            font-weight: bold;
+            color: #e65100;
+        }
+
+        .notice-title span {
+            font-size: 1rem;
+        }
+
+        .notice-close {
+            background: none;
+            border: none;
+            font-size: 18px;
+            cursor: pointer;
+            color: #999;
+            transition: 0.2s;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+        }
+
+        .notice-close:hover {
+            background-color: rgba(0,0,0,0.05);
+            color: #333;
+        }
+
+        .notice-content {
+            padding: 12px 15px 15px 15px;
+            font-size: 0.8rem;
+            line-height: 1.5;
+            color: #5d4037;
+        }
+
+        .notice-content strong {
+            color: #e65100;
+        }
+
+        .notice-content .emoji-badge {
+            display: inline-block;
+            margin-right: 5px;
+        }
+
+        .notice-modal::before {
+            content: "✨";
+            position: absolute;
+            top: -8px;
+            right: 12px;
+            font-size: 14px;
+            background: #ff9800;
+            color: white;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+        }
+
+        /* AVISO PERMANENTE DE DIREITOS AUTORAIS (NÃO FECHÁVEL) */
+        .copyright-notice {
+            background: linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%);
+            border-left: 4px solid #f44336;
+            border-radius: 12px;
+            padding: 15px 20px;
+            margin: 20px auto 30px auto;
+            max-width: 800px;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+
+        .copyright-notice p {
+            color: #c62828;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            margin: 0;
+        }
+
+        .copyright-notice a {
+            color: #d32f2f;
+            text-decoration: underline;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .copyright-notice a:hover {
+            color: #b71c1c;
+        }
+
+        .copyright-icon {
+            font-size: 1.2rem;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+
+        @media (max-width: 480px) {
+            .notice-modal {
+                width: 260px;
+                bottom: 15px;
+                right: 15px;
+            }
+            
+            .notice-content {
+                font-size: 0.75rem;
+                padding: 10px 12px 12px 12px;
+            }
+
+            .copyright-notice p {
+                font-size: 0.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="topbar">
+        <div class="logo" onclick="irPara('menu.html')">📚 AlfaNet</div>
+        <div class="menu">
+            <button onclick="irPara('aulas')" style="background-color: #2e7d32;">Aulas</button>
+            <button onclick="irPara('exercicios.html')">Exercícios</button>
+            <button onclick="irPara('curiosidades.html')">Curiosidades</button>
+            <button onclick="irPara('desempenho')">Desempenho</button>
+            <button onclick="irPara('perfil.html')">Perfil</button>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="page-title">
+            <h1>📖 Nossas Aulas</h1>
+            <p>✨ Clique em qualquer módulo para assistir à videoaula ✨</p>
+        </div>
+
+        <!-- AVISO PERMANENTE DE DIREITOS AUTORAIS -->
+        <div class="copyright-notice">
+            <p>
+                <span class="copyright-icon">⚠️</span> 
+                <strong>Aviso de Direitos Autorais:</strong> Devido a termos de direitos autorais e políticas de conteúdo, 
+                alguns vídeos podem não ser reproduzidos diretamente nesta página. 
+                Caso o vídeo não carregue, <a href="javascript:void(0)" onclick="abrirPlaylistYouTube()">clique aqui para assistir à playlist completa no YouTube</a>.
+            </p>
+        </div>
+
+        <div class="modules-grid" id="modulesGrid">
+            <!-- Módulo 1 - Alfabeto -->
+            <div class="module-card" data-module="1" data-video-link="https://www.youtube.com/watch?v=ho3M84IKB9Q">
+                <div class="card-preview">
+                    <div class="module-icon">🔤</div>
+                    <h3>Alfabeto</h3>
+                    <div class="module-description">
+                        Aprenda todas as letras do alfabeto, seus sons e como escrever cada uma.
+                    </div>
+                    <div class="module-badge">📺 Vídeo aula</div>
+                    <div class="expand-hint">✨ Clique para assistir ✨</div>
+                </div>
+                <div class="card-expanded">
+                    <div class="video-container">
+                        <iframe src="https://www.youtube.com/embed/ho3M84IKB9Q?rel=0" title="Vídeo Alfabeto" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                    </div>
+                    <div class="video-caption">
+                        🎵 Aprenda o alfabeto com música e diversão!
+                        <br>
+                        <small>🔗 Se não carregar: <a href="https://www.youtube.com/watch?v=ho3M84IKB9Q" target="_blank">Assistir no YouTube</a></small>
+                    </div>
+                    <button class="close-video-btn">🔽 Fechar vídeo</button>
+                </div>
+            </div>
+
+            <!-- Módulo 2 - Vogais -->
+            <div class="module-card" data-module="2" data-video-link="https://www.youtube.com/watch?v=WGDq8jY4Rzk">
+                <div class="card-preview">
+                    <div class="module-icon">🎵</div>
+                    <h3>Vogais</h3>
+                    <div class="module-description">
+                        Conheça as vogais A, E, I, O, U. São a base para formar todas as palavras!
+                    </div>
+                    <div class="module-badge">📺 Vídeo aula</div>
+                    <div class="expand-hint">✨ Clique para assistir ✨</div>
+                </div>
+                <div class="card-expanded">
+                    <div class="video-container">
+                        <iframe src="https://www.youtube.com/embed/WGDq8jY4Rzk?rel=0" title="Vídeo Vogais" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                    </div>
+                    <div class="video-caption">
+                        🎶 Aprenda as vogais cantando!
+                        <br>
+                        <small>🔗 Se não carregar: <a href="https://www.youtube.com/watch?v=WGDq8jY4Rzk" target="_blank">Assistir no YouTube</a></small>
+                    </div>
+                    <button class="close-video-btn">🔽 Fechar vídeo</button>
+                </div>
+            </div>
+
+            <!-- Módulo 3 - Consoantes -->
+            <div class="module-card" data-module="3" data-video-link="https://www.youtube.com/watch?v=H9S5X1IcUPk">
+                <div class="card-preview">
+                    <div class="module-icon">🔊</div>
+                    <h3>Consoantes</h3>
+                    <div class="module-description">
+                        Descubra as consoantes e como elas se juntam às vogais para formar sílabas.
+                    </div>
+                    <div class="module-badge">📺 Vídeo aula</div>
+                    <div class="expand-hint">✨ Clique para assistir ✨</div>
+                </div>
+                <div class="card-expanded">
+                    <div class="video-container">
+                        <iframe src="https://www.youtube.com/embed/H9S5X1IcUPk?rel=0" title="Vídeo Consoantes" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                    </div>
+                    <div class="video-caption">
+                        📣 Aprenda todas as consoantes de forma fácil!
+                        <br>
+                        <small>🔗 Se não carregar: <a href="https://www.youtube.com/watch?v=H9S5X1IcUPk" target="_blank">Assistir no YouTube</a></small>
+                    </div>
+                    <button class="close-video-btn">🔽 Fechar vídeo</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer-note">
+        🌱 Aulas desenvolvidas com carinho para ajudar você a aprender a ler e escrever. Assista quantas vezes quiser!
+    </div>
+
+    <!-- JANELA DE AVISO DISCRETA (FECHÁVEL) -->
+    <div class="notice-modal" id="noticeModal">
+        <div class="notice-header">
+            <div class="notice-title">
+                <span>📢</span> Em desenvolvimento
+            </div>
+            <button class="notice-close" onclick="fecharAviso()">✕</button>
+        </div>
+        <div class="notice-content">
+            <span class="emoji-badge">✨</span> <strong>Versão prévia</strong><br>
+            Mais aulas e elementos interativos serão adicionados em breve! 🚀
+        </div>
+    </div>
+
+    <script>
+        // Link da playlist para o aviso de direitos autorais
+        const PLAYLIST_URL = "https://www.youtube.com/watch?v=mBKwLgdSw3Y&list=PLF2J-8QoLzYE2T-09ASI-Sn2jyIj46Vv9";
+
+        function irPara(pagina) {
+            if (pagina === 'aulas') {
+                mostrarMensagem("Você já está na página de Aulas!");
+                return;
+            }
+            if (pagina === 'menu.html') {
+                window.location.href = pagina;
+            } else if (pagina === 'perfil.html') {
+                window.location.href = pagina;
+            } else if (pagina === 'exercicios.html') {
+                window.location.href = pagina;
+            } else if (pagina === 'curiosidades.html') {
+                window.location.href = pagina;
+            } else {
+                alert("🔜 Funcionalidade em desenvolvimento: " + pagina + "\nEm breve teremos novidades!");
+            }
+        }
+
+        function mostrarMensagem(texto) {
+            const msgDiv = document.createElement('div');
+            msgDiv.textContent = texto;
+            msgDiv.style.position = 'fixed';
+            msgDiv.style.bottom = '20px';
+            msgDiv.style.left = '50%';
+            msgDiv.style.transform = 'translateX(-50%)';
+            msgDiv.style.backgroundColor = '#1b5e20';
+            msgDiv.style.color = 'white';
+            msgDiv.style.padding = '12px 24px';
+            msgDiv.style.borderRadius = '40px';
+            msgDiv.style.fontWeight = 'bold';
+            msgDiv.style.zIndex = '9999';
+            msgDiv.style.boxShadow = '0 4px 12px rgba(0,0,0,0.2)';
+            document.body.appendChild(msgDiv);
+            setTimeout(() => {
+                msgDiv.remove();
+            }, 2000);
+        }
+
+        function fecharVideo(botao) {
+            const card = botao.closest('.module-card');
+            if (card) {
+                card.classList.remove('expanded');
+            }
+        }
+
+        function fecharAviso() {
+            const modal = document.getElementById('noticeModal');
+            if (modal) {
+                modal.style.animation = 'slideOutRight 0.2s ease-out forwards';
+                setTimeout(() => {
+                    modal.remove();
+                }, 200);
+            }
+        }
+
+        // Função específica para abrir a playlist do aviso de direitos autorais
+        function abrirPlaylistYouTube() {
+            window.open(PLAYLIST_URL, '_blank');
+        }
+
+        // Função para abrir link externo dos módulos individuais
+        function abrirLinkExterno(event, elemento) {
+            event.preventDefault();
+            event.stopPropagation();
+            const card = elemento.closest('.module-card');
+            if (card) {
+                const videoLink = card.getAttribute('data-video-link');
+                if (videoLink) {
+                    window.open(videoLink, '_blank');
+                }
+            }
+        }
+
+        const styleSheet = document.createElement("style");
+        styleSheet.textContent = `
+            @keyframes slideOutRight {
+                from {
+                    transform: translateX(0);
+                    opacity: 1;
+                }
+                to {
+                    transform: translateX(100%);
+                    opacity: 0;
+                }
+            }
+        `;
+        document.head.appendChild(styleSheet);
+
+        function setupModuleCards() {
+            const cards = document.querySelectorAll('.module-card');
+            
+            cards.forEach(card => {
+                card.addEventListener('click', function(event) {
+                    if (event.target.classList.contains('close-video-btn')) {
+                        return;
+                    }
+                    if (event.target.tagName === 'A') {
+                        return;
+                    }
+                    
+                    const isExpanded = card.classList.contains('expanded');
+                    const allExpanded = document.querySelectorAll('.module-card.expanded');
+                    allExpanded.forEach(expCard => {
+                        if (expCard !== card) {
+                            expCard.classList.remove('expanded');
+                        }
+                    });
+                    
+                    if (!isExpanded) {
+                        card.classList.add('expanded');
+                        setTimeout(() => {
+                            card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                        }, 100);
+                    }
+                });
+                
+                const closeBtn = card.querySelector('.close-video-btn');
+                if (closeBtn) {
+                    closeBtn.addEventListener('click', function(event) {
+                        event.stopPropagation();
+                        fecharVideo(this);
+                    });
+                }
+            });
+        }
+
+        function revealCardsOnScroll() {
+            const cards = document.querySelectorAll('.module-card');
+            const windowHeight = window.innerHeight;
+            
+            cards.forEach(card => {
+                const cardTop = card.getBoundingClientRect().top;
+                if (cardTop < windowHeight - 80) {
+                    card.classList.add('revealed');
+                }
+            });
+        }
+
+        function handleIframeErrors() {
+            const iframes = document.querySelectorAll('iframe');
+            iframes.forEach(iframe => {
+                iframe.addEventListener('error', function() {
+                    console.log('Erro ao carregar iframe');
+                });
+            });
+        }
+
+        function init() {
+            setupModuleCards();
+            handleIframeErrors();
+            
+            setTimeout(() => {
+                revealCardsOnScroll();
+            }, 100);
+            
+            window.addEventListener('scroll', revealCardsOnScroll);
+            window.addEventListener('resize', revealCardsOnScroll);
+            
+            window.irPara = irPara;
+            window.fecharVideo = fecharVideo;
+            window.fecharAviso = fecharAviso;
+            window.abrirLinkExterno = abrirLinkExterno;
+            window.abrirPlaylistYouTube = abrirPlaylistYouTube;
+        }
+        
+        window.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>

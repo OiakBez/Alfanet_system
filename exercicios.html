@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AlfaNet - Exercícios Interativos</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Arial, Helvetica, sans-serif;
+            background-color: #f5f9f5;
+            color: #333;
+        }
+
+        /* BARRA SUPERIOR */
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #1b5e20;
+            padding: 15px 20px;
+            flex-wrap: wrap;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .logo {
+            color: white;
+            font-size: 24px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .menu {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .menu button {
+            background-color: transparent;
+            border: none;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            padding: 8px 12px;
+            border-radius: 6px;
+            transition: 0.3s;
+            font-weight: 500;
+        }
+
+        .menu button:hover {
+            background-color: #2e7d32;
+            transform: translateY(-2px);
+        }
+
+        /* CONTEÚDO PRINCIPAL */
+        .container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .page-title {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .page-title h1 {
+            color: #1b5e20;
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+        }
+
+        .page-title p {
+            color: #666;
+            font-size: 1.1rem;
+        }
+
+        /* GRADE DE EXERCÍCIOS */
+        .exercises-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 30px;
+            margin-bottom: 50px;
+        }
+
+        /* CARD DO EXERCÍCIO */
+        .exercise-card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+            overflow: hidden;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .exercise-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(27,94,32,0.2);
+            border-color: #4caf50;
+        }
+
+        .card-header {
+            background: linear-gradient(135deg, #1b5e20 0%, #2e7d32 100%);
+            padding: 20px;
+            color: white;
+        }
+
+        .card-header h3 {
+            font-size: 1.5rem;
+            margin-bottom: 5px;
+        }
+
+        .card-header .level {
+            display: inline-block;
+            background: rgba(255,255,255,0.3);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            margin-top: 8px;
+        }
+
+        .card-body {
+            padding: 25px;
+        }
+
+        .question {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            color: #333;
+            font-weight: 500;
+        }
+
+        /* Opções de resposta */
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .option {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 15px;
+            background: #f9f9f9;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: 0.2s;
+            border: 2px solid transparent;
+        }
+
+        .option:hover {
+            background: #e8f5e9;
+            transform: translateX(5px);
+        }
+
+        .option.selected {
+            background: #c8e6c9;
+            border-color: #2e7d32;
+        }
+
+        .option input {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            accent-color: #1b5e20;
+        }
+
+        .option label {
+            flex: 1;
+            cursor: pointer;
+            font-size: 1rem;
+            color: #333;
+        }
+
+        /* Botões */
+        .btn-check {
+            background-color: #1b5e20;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 30px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+            width: 100%;
+            margin-bottom: 12px;
+        }
+
+        .btn-check:hover {
+            background-color: #2e7d32;
+            transform: scale(1.02);
+        }
+
+        .feedback {
+            padding: 12px;
+            border-radius: 12px;
+            text-align: center;
+            font-weight: 500;
+            display: none;
+        }
+
+        .feedback.correct {
+            background: #d4edda;
+            color: #155724;
+            display: block;
+        }
+
+        .feedback.wrong {
+            background: #f8d7da;
+            color: #721c24;
+            display: block;
+        }
+
+        /* Pontuação */
+        .score-area {
+            background: linear-gradient(135deg, #1b5e20, #2e7d32);
+            border-radius: 20px;
+            padding: 25px;
+            text-align: center;
+            color: white;
+            margin-top: 30px;
+        }
+
+        .score-area h3 {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+        }
+
+        .score-number {
+            font-size: 3rem;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        .reset-btn {
+            background-color: #ff9800;
+            color: white;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 30px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+            margin-top: 10px;
+        }
+
+        .reset-btn:hover {
+            background-color: #f57c00;
+            transform: scale(1.02);
+        }
+
+        /* Scroll reveal */
+        .exercise-card {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+
+        .exercise-card.revealed {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        @media (max-width: 768px) {
+            .exercises-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .page-title h1 {
+                font-size: 1.8rem;
+            }
+        }
+
+        .footer-note {
+            text-align: center;
+            padding: 30px 20px 40px;
+            font-size: 0.85rem;
+            color: #8ba88e;
+            border-top: 1px solid #e0f0e0;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="topbar">
+        <div class="logo" onclick="irPara('menu.html')">📚 AlfaNet</div>
+        <div class="menu">
+            <button onclick="irPara('class.html')">Aulas</button>
+            <button onclick="irPara('exercicios')" style="background-color: #2e7d32;">Exercícios</button>
+            <button onclick="irPara('curiosidades.html')">Curiosidades</button>
+            <button onclick="irPara('desempenho')">Desempenho</button>
+            <button onclick="irPara('perfil.html')">Perfil</button>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="page-title">
+            <h1>📝 Vamos Praticar!</h1>
+            <p>Responda os exercícios e veja seu progresso. Clique na opção correta e depois em "Verificar".</p>
+        </div>
+
+        <div class="exercises-grid" id="exercisesGrid">
+            <!-- Exercício 1 - Alfabeto -->
+            <div class="exercise-card" data-id="1">
+                <div class="card-header">
+                    <h3>🔤 Exercício 1 - Alfabeto</h3>
+                    <span class="level">⭐ Nível Fácil</span>
+                </div>
+                <div class="card-body">
+                    <div class="question">❓ Qual é a PRIMEIRA letra do alfabeto?</div>
+                    <div class="options">
+                        <div class="option" data-value="B">
+                            <input type="radio" name="q1" value="B" id="q1_b">
+                            <label for="q1_b">B) Letra B</label>
+                        </div>
+                        <div class="option" data-value="A">
+                            <input type="radio" name="q1" value="A" id="q1_a">
+                            <label for="q1_a">A) Letra A</label>
+                        </div>
+                        <div class="option" data-value="C">
+                            <input type="radio" name="q1" value="C" id="q1_c">
+                            <label for="q1_c">C) Letra C</label>
+                        </div>
+                    </div>
+                    <button class="btn-check" onclick="checkAnswer(1, 'A')">✓ Verificar resposta</button>
+                    <div class="feedback" id="feedback1"></div>
+                </div>
+            </div>
+
+            <!-- Exercício 2 - Vogais -->
+            <div class="exercise-card" data-id="2">
+                <div class="card-header">
+                    <h3>🎵 Exercício 2 - Vogais</h3>
+                    <span class="level">⭐ Nível Fácil</span>
+                </div>
+                <div class="card-body">
+                    <div class="question">❓ Quais são as vogais?</div>
+                    <div class="options">
+                        <div class="option" data-value="BCD">
+                            <input type="radio" name="q2" value="BCD" id="q2_bcd">
+                            <label for="q2_bcd">B, C, D</label>
+                        </div>
+                        <div class="option" data-value="AEIOU">
+                            <input type="radio" name="q2" value="AEIOU" id="q2_aeiou">
+                            <label for="q2_aeiou">A, E, I, O, U</label>
+                        </div>
+                        <div class="option" data-value="XYZ">
+                            <input type="radio" name="q2" value="XYZ" id="q2_xyz">
+                            <label for="q2_xyz">X, Y, Z</label>
+                        </div>
+                    </div>
+                    <button class="btn-check" onclick="checkAnswer(2, 'AEIOU')">✓ Verificar resposta</button>
+                    <div class="feedback" id="feedback2"></div>
+                </div>
+            </div>
+
+            <!-- Exercício 3 - Formando Palavras -->
+            <div class="exercise-card" data-id="3">
+                <div class="card-header">
+                    <h3>📝 Exercício 3 - Palavras</h3>
+                    <span class="level">⭐⭐ Nível Médio</span>
+                </div>
+                <div class="card-body">
+                    <div class="question">❓ Qual palavra é formada pelas letras C - A - S - A?</div>
+                    <div class="options">
+                        <div class="option" data-value="CASA">
+                            <input type="radio" name="q3" value="CASA" id="q3_casa">
+                            <label for="q3_casa">CASA</label>
+                        </div>
+                        <div class="option" data-value="COCO">
+                            <input type="radio" name="q3" value="COCO" id="q3_coco">
+                            <label for="q3_coco">COCO</label>
+                        </div>
+                        <div class="option" data-value="SACO">
+                            <input type="radio" name="q3" value="SACO" id="q3_saco">
+                            <label for="q3_saco">SACO</label>
+                        </div>
+                    </div>
+                    <button class="btn-check" onclick="checkAnswer(3, 'CASA')">✓ Verificar resposta</button>
+                    <div class="feedback" id="feedback3"></div>
+                </div>
+            </div>
+
+            <!-- Exercício 4 - Leitura -->
+            <div class="exercise-card" data-id="4">
+                <div class="card-header">
+                    <h3>📖 Exercício 4 - Leitura</h3>
+                    <span class="level">⭐⭐ Nível Médio</span>
+                </div>
+                <div class="card-body">
+                    <div class="question">❓ Leia a frase: "O GATO É BONITO". O que é bonito?</div>
+                    <div class="options">
+                        <div class="option" data-value="CACHORRO">
+                            <input type="radio" name="q4" value="CACHORRO" id="q4_cachorro">
+                            <label for="q4_cachorro">O cachorro</label>
+                        </div>
+                        <div class="option" data-value="GATO">
+                            <input type="radio" name="q4" value="GATO" id="q4_gato">
+                            <label for="q4_gato">O gato</label>
+                        </div>
+                        <div class="option" data-value="PASSARO">
+                            <input type="radio" name="q4" value="PASSARO" id="q4_passaro">
+                            <label for="q4_passaro">O pássaro</label>
+                        </div>
+                    </div>
+                    <button class="btn-check" onclick="checkAnswer(4, 'GATO')">✓ Verificar resposta</button>
+                    <div class="feedback" id="feedback4"></div>
+                </div>
+            </div>
+
+            <!-- Exercício 5 - Escrita -->
+            <div class="exercise-card" data-id="5">
+                <div class="card-header">
+                    <h3>✍️ Exercício 5 - Escrita</h3>
+                    <span class="level">⭐⭐⭐ Nível Desafiador</span>
+                </div>
+                <div class="card-body">
+                    <div class="question">❓ Qual palavra está escrita corretamente?</div>
+                    <div class="options">
+                        <div class="option" data-value="ESCOLA">
+                            <input type="radio" name="q5" value="ESCOLA" id="q5_escola">
+                            <label for="q5_escola">ESCOLA</label>
+                        </div>
+                        <div class="option" data-value="ESKOLA">
+                            <input type="radio" name="q5" value="ESKOLA" id="q5_eskola">
+                            <label for="q5_eskola">ESKOLA</label>
+                        </div>
+                        <div class="option" data-value="ESCOLLA">
+                            <input type="radio" name="q5" value="ESCOLLA" id="q5_escolla">
+                            <label for="q5_escolla">ESCOLLA</label>
+                        </div>
+                    </div>
+                    <button class="btn-check" onclick="checkAnswer(5, 'ESCOLA')">✓ Verificar resposta</button>
+                    <div class="feedback" id="feedback5"></div>
+                </div>
+            </div>
+
+            <!-- Exercício 6 - Sílabas -->
+            <div class="exercise-card" data-id="6">
+                <div class="card-header">
+                    <h3>🧩 Exercício 6 - Sílabas</h3>
+                    <span class="level">⭐⭐ Nível Médio</span>
+                </div>
+                <div class="card-body">
+                    <div class="question">❓ Quantas sílabas tem a palavra "BONITO"?</div>
+                    <div class="options">
+                        <div class="option" data-value="2">
+                            <input type="radio" name="q6" value="2" id="q6_2">
+                            <label for="q6_2">2 sílabas</label>
+                        </div>
+                        <div class="option" data-value="3">
+                            <input type="radio" name="q6" value="3" id="q6_3">
+                            <label for="q6_3">3 sílabas (BO-NI-TO)</label>
+                        </div>
+                        <div class="option" data-value="4">
+                            <input type="radio" name="q6" value="4" id="q6_4">
+                            <label for="q6_4">4 sílabas</label>
+                        </div>
+                    </div>
+                    <button class="btn-check" onclick="checkAnswer(6, '3')">✓ Verificar resposta</button>
+                    <div class="feedback" id="feedback6"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Área de Pontuação -->
+        <div class="score-area">
+            <h3>🏆 Sua Pontuação 🏆</h3>
+            <div class="score-number" id="scoreDisplay">0</div>
+            <p>de 6 exercícios respondidos corretamente</p>
+            <button class="reset-btn" onclick="resetAllAnswers()">🔄 Resetar todos os exercícios</button>
+        </div>
+    </div>
+
+    <div class="footer-note">
+        🌱 Pratique todos os dias! Quanto mais você treina, mais fácil fica aprender a ler e escrever.
+    </div>
+
+    <script>
+        // Armazenar respostas dos usuários
+        let userAnswers = {
+            1: { answered: false, correct: false },
+            2: { answered: false, correct: false },
+            3: { answered: false, correct: false },
+            4: { answered: false, correct: false },
+            5: { answered: false, correct: false },
+            6: { answered: false, correct: false }
+        };
+
+        // Função para verificar resposta
+        function checkAnswer(questionId, correctAnswer) {
+            // Pegar o card do exercício
+            const card = document.querySelector(`.exercise-card[data-id="${questionId}"]`);
+            const selectedOption = card.querySelector(`input[type="radio"]:checked`);
+            const feedbackDiv = document.getElementById(`feedback${questionId}`);
+            
+            if (!selectedOption) {
+                feedbackDiv.textContent = "⚠️ Por favor, selecione uma resposta primeiro!";
+                feedbackDiv.className = "feedback wrong";
+                return;
+            }
+            
+            const userAnswer = selectedOption.value;
+            
+            if (userAnswer === correctAnswer) {
+                feedbackDiv.textContent = "✅ Correto! Muito bem! Continue assim! 🎉";
+                feedbackDiv.className = "feedback correct";
+                userAnswers[questionId] = { answered: true, correct: true };
+            } else {
+                feedbackDiv.textContent = "❌ Ops! Não foi dessa vez. Tente novamente! 💪";
+                feedbackDiv.className = "feedback wrong";
+                userAnswers[questionId] = { answered: true, correct: false };
+            }
+            
+            // Atualizar pontuação
+            updateScore();
+        }
+        
+        // Atualizar pontuação total
+        function updateScore() {
+            let correctCount = 0;
+            for (let i = 1; i <= 6; i++) {
+                if (userAnswers[i].correct === true) {
+                    correctCount++;
+                }
+            }
+            
+            const scoreDisplay = document.getElementById('scoreDisplay');
+            scoreDisplay.textContent = correctCount;
+            
+            // Adicionar efeito visual na pontuação
+            scoreDisplay.style.transform = 'scale(1.1)';
+            setTimeout(() => {
+                scoreDisplay.style.transform = 'scale(1)';
+            }, 200);
+        }
+        
+        // Resetar todos os exercícios
+        function resetAllAnswers() {
+            if (confirm("Tem certeza que deseja resetar todos os exercícios? Todo o seu progresso será perdido.")) {
+                // Resetar objeto de respostas
+                for (let i = 1; i <= 6; i++) {
+                    userAnswers[i] = { answered: false, correct: false };
+                    
+                    // Limpar feedback
+                    const feedbackDiv = document.getElementById(`feedback${i}`);
+                    feedbackDiv.textContent = '';
+                    feedbackDiv.className = 'feedback';
+                    
+                    // Desmarcar todos os radio buttons
+                    const card = document.querySelector(`.exercise-card[data-id="${i}"]`);
+                    const radios = card.querySelectorAll('input[type="radio"]');
+                    radios.forEach(radio => {
+                        radio.checked = false;
+                    });
+                }
+                
+                // Resetar pontuação
+                updateScore();
+                
+                // Mostrar mensagem de sucesso
+                const msgDiv = document.createElement('div');
+                msgDiv.textContent = "✨ Todos os exercícios foram resetados! Você pode começar de novo. ✨";
+                msgDiv.style.position = 'fixed';
+                msgDiv.style.bottom = '20px';
+                msgDiv.style.left = '50%';
+                msgDiv.style.transform = 'translateX(-50%)';
+                msgDiv.style.backgroundColor = '#1b5e20';
+                msgDiv.style.color = 'white';
+                msgDiv.style.padding = '12px 24px';
+                msgDiv.style.borderRadius = '40px';
+                msgDiv.style.fontWeight = 'bold';
+                msgDiv.style.zIndex = '9999';
+                document.body.appendChild(msgDiv);
+                setTimeout(() => {
+                    msgDiv.remove();
+                }, 3000);
+            }
+        }
+        
+        // Opção clicável (melhorar experiência)
+        function setupOptionClick() {
+            const options = document.querySelectorAll('.option');
+            options.forEach(option => {
+                option.addEventListener('click', function() {
+                    const radio = this.querySelector('input[type="radio"]');
+                    if (radio) {
+                        radio.checked = true;
+                        
+                        // Remover selected de todas opções do mesmo grupo
+                        const card = this.closest('.exercise-card');
+                        const allOptions = card.querySelectorAll('.option');
+                        allOptions.forEach(opt => opt.classList.remove('selected'));
+                        
+                        // Adicionar selected na opção clicada
+                        this.classList.add('selected');
+                    }
+                });
+            });
+        }
+        
+        // Navegação do menu
+        function irPara(pagina) {
+            if (pagina === 'exercicios') {
+                mostrarMensagem("Você já está na página de Exercícios!");
+                return;
+            }
+            if (pagina === 'menu.html') {
+                window.location.href = pagina;
+            } else if (pagina === 'perfil.html') {
+                window.location.href = pagina;
+            } else if (pagina === 'class.html') {
+                window.location.href = pagina;
+            } else if (pagina === 'curiosidades.html') {
+                window.location.href = pagina;
+            } else {
+                alert("🔜 Funcionalidade em desenvolvimento: " + pagina + "\nEm breve teremos novidades!");
+            }
+        }
+        
+        function mostrarMensagem(texto) {
+            const msgDiv = document.createElement('div');
+            msgDiv.textContent = texto;
+            msgDiv.style.position = 'fixed';
+            msgDiv.style.bottom = '20px';
+            msgDiv.style.left = '50%';
+            msgDiv.style.transform = 'translateX(-50%)';
+            msgDiv.style.backgroundColor = '#1b5e20';
+            msgDiv.style.color = 'white';
+            msgDiv.style.padding = '12px 24px';
+            msgDiv.style.borderRadius = '40px';
+            msgDiv.style.fontWeight = 'bold';
+            msgDiv.style.zIndex = '9999';
+            document.body.appendChild(msgDiv);
+            setTimeout(() => {
+                msgDiv.remove();
+            }, 2000);
+        }
+        
+        // Scroll reveal
+        function revealCardsOnScroll() {
+            const cards = document.querySelectorAll('.exercise-card');
+            const windowHeight = window.innerHeight;
+            
+            cards.forEach(card => {
+                const cardTop = card.getBoundingClientRect().top;
+                if (cardTop < windowHeight - 80) {
+                    card.classList.add('revealed');
+                }
+            });
+        }
+        
+        // Inicialização
+        function init() {
+            setupOptionClick();
+            
+            setTimeout(() => {
+                revealCardsOnScroll();
+            }, 100);
+            
+            window.addEventListener('scroll', revealCardsOnScroll);
+            window.addEventListener('resize', revealCardsOnScroll);
+            
+            window.irPara = irPara;
+            window.checkAnswer = checkAnswer;
+            window.resetAllAnswers = resetAllAnswers;
+        }
+        
+        window.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>

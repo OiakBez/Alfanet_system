@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AlfaNet - Meu Perfil</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Arial, Helvetica, sans-serif;
+            background-color: #f5f9f5;
+            color: #333;
+        }
+
+        /* BARRA SUPERIOR */
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #1b5e20;
+            padding: 15px 20px;
+            flex-wrap: wrap;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .logo {
+            color: white;
+            font-size: 24px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .menu {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .menu button {
+            background-color: transparent;
+            border: none;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            padding: 8px 12px;
+            border-radius: 6px;
+            transition: 0.3s;
+            font-weight: 500;
+        }
+
+        .menu button:hover {
+            background-color: #2e7d32;
+            transform: translateY(-2px);
+        }
+
+        /* CONTEÚDO PRINCIPAL */
+        .container {
+            max-width: 1000px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        /* CARD DO PERFIL */
+        .profile-card {
+            background: white;
+            border-radius: 30px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            overflow: hidden;
+            margin-bottom: 30px;
+            border: 1px solid rgba(27,94,32,0.2);
+        }
+
+        .profile-header {
+            background: linear-gradient(135deg, #1b5e20 0%, #2e7d32 100%);
+            padding: 30px 30px 70px 30px;
+            text-align: center;
+            color: white;
+        }
+
+        .profile-header h2 {
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
+
+        .profile-header p {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+
+        .profile-body {
+            padding: 0 30px 30px 30px;
+            margin-top: -40px;
+        }
+
+        /* Área da foto */
+        .photo-area {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .profile-photo {
+            width: 130px;
+            height: 130px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 5px solid white;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            background-color: #e0e0e0;
+            display: inline-block;
+        }
+
+        .default-avatar {
+            width: 130px;
+            height: 130px;
+            border-radius: 50%;
+            background: #c8e6c9;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 64px;
+            border: 5px solid white;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .btn-photo {
+            margin-top: 12px;
+            background-color: #4caf50;
+            color: white;
+            border: none;
+            padding: 8px 18px;
+            border-radius: 40px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+            transition: 0.3s;
+            display: inline-block;
+        }
+
+        .btn-photo:hover {
+            background-color: #2e7d32;
+            transform: scale(1.02);
+        }
+
+        /* Campos do formulário */
+        .info-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            color: #1b5e20;
+            margin-bottom: 8px;
+            font-size: 15px;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 16px;
+            font-size: 16px;
+            transition: 0.2s;
+            box-sizing: border-box;
+            font-family: inherit;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #4caf50;
+            box-shadow: 0 0 0 3px rgba(76,175,80,0.2);
+        }
+
+        .readonly-info {
+            background-color: #f5f5f5;
+            padding: 12px 15px;
+            border-radius: 16px;
+            color: #555;
+            border: 1px solid #ddd;
+        }
+
+        /* Botões */
+        .btn-save {
+            background-color: #1b5e20;
+            color: white;
+            border: none;
+            padding: 12px 28px;
+            border-radius: 40px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+            margin-right: 12px;
+            margin-top: 10px;
+        }
+
+        .btn-save:hover {
+            background-color: #2e7d32;
+            transform: translateY(-2px);
+        }
+
+        .btn-reset {
+            background-color: #e0e0e0;
+            color: #333;
+            border: none;
+            padding: 12px 28px;
+            border-radius: 40px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+            margin-top: 10px;
+        }
+
+        .btn-reset:hover {
+            background-color: #ccc;
+        }
+
+        .status-message {
+            margin-top: 20px;
+            padding: 12px;
+            border-radius: 16px;
+            background-color: #e8f5e9;
+            color: #2e7d32;
+            text-align: center;
+            font-weight: 500;
+            display: none;
+        }
+
+        .info-note {
+            font-size: 13px;
+            color: #6c8e6e;
+            margin-top: 15px;
+            text-align: center;
+            background: #f9f9f9;
+            padding: 12px;
+            border-radius: 20px;
+        }
+
+        hr {
+            margin: 20px 0;
+            border: none;
+            border-top: 2px dotted #c8e6c9;
+        }
+
+        /* badges de visitante */
+        .badge-visitante {
+            background-color: #ffb74d;
+            color: #5d2e00;
+            padding: 5px 12px;
+            border-radius: 30px;
+            font-size: 13px;
+            font-weight: bold;
+            display: inline-block;
+            margin-top: 8px;
+        }
+
+        @media (max-width: 650px) {
+            .profile-body {
+                padding: 0 20px 25px 20px;
+            }
+            .btn-save, .btn-reset {
+                width: 100%;
+                margin-bottom: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="topbar">
+        <div class="logo" onclick="irPara('menu.html')">📚 AlfaNet</div>
+        <div class="menu">
+            <button onclick="irPara('class.html')">Aulas</button>
+            <button onclick="irPara('exercicios.html')">Exercícios</button>
+            <button onclick="irPara('curiosidades.html')">Curiosidades</button>
+            <button onclick="irPara('desempenho')">Desempenho</button>
+            <button onclick="irPara('perfil')" style="background-color: #2e7d32;">Perfil</button>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="profile-card">
+            <div class="profile-header">
+                <h2>✨ Meu Perfil ✨</h2>
+                <p>Personalize do seu jeito simples e fácil</p>
+            </div>
+            <div class="profile-body">
+                <!-- Área da Foto -->
+                <div class="photo-area" id="photoArea">
+                    <!-- O conteúdo dinâmico será injetado via JS -->
+                </div>
+
+                <!-- Formulário de Dados -->
+                <div class="info-group">
+                    <label>👤 Nome completo:</label>
+                    <input type="text" id="nomeCompleto" placeholder="Ex: Maria Aparecida" maxlength="60">
+                </div>
+
+                <div class="info-group">
+                    <label>📸 Sobre você (opcional):</label>
+                    <input type="text" id="sobreMim" placeholder="Conte um pouco sobre sua jornada de estudos...">
+                </div>
+
+                <div class="info-group">
+                    <label>⭐ Status atual:</label>
+                    <div class="readonly-info" id="statusAtual">Visitante (sem perfil personalizado)</div>
+                </div>
+
+                <div>
+                    <button class="btn-save" id="btnSalvarPerfil">💾 Salvar meu perfil</button>
+                    <button class="btn-reset" id="btnResetarPerfil">🔄 Voltar ao perfil Visitante</button>
+                </div>
+
+                <div id="statusMessage" class="status-message"></div>
+                
+                <div class="info-note">
+                    💡 Dica: Você não precisa de cadastro complicado! Preencha seu nome, adicione uma foto (se quiser) e salve. 
+                    Seus dados ficam salvos só no seu navegador. Fique à vontade!
+                </div>
+                <hr>
+                <div style="text-align: center; font-size: 14px; color: #5a6e5c;">
+                    🌟 "A leitura abre portas que ninguém pode fechar" - Continue aprendendo!
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ===================== GERENCIAMENTO DE PERFIL SIMPLES (LOCALSTORAGE) =====================
+        // Não precisa de servidor, salva as informações no próprio navegador da pessoa.
+        
+        // Chaves do armazenamento
+        const STORAGE_NOME = 'alfanet_nome';
+        const STORAGE_SOBRE = 'alfanet_sobre';
+        const STORAGE_FOTO = 'alfanet_foto';     // armazenamos a foto como base64 (string)
+        const STORAGE_PERSONALIZADO = 'alfanet_personalizado'; // booleano: se tem perfil salvo
+
+        // Elementos do DOM
+        const nomeInput = document.getElementById('nomeCompleto');
+        const sobreInput = document.getElementById('sobreMim');
+        const statusDiv = document.getElementById('statusAtual');
+        const photoArea = document.getElementById('photoArea');
+        const btnSalvar = document.getElementById('btnSalvarPerfil');
+        const btnResetar = document.getElementById('btnResetarPerfil');
+        const statusMessageDiv = document.getElementById('statusMessage');
+
+        // Variável para armazenar a foto em base64 temporariamente
+        let fotoBase64 = null;
+
+        // Função para mostrar mensagem de sucesso/feedback
+        function mostrarMensagem(texto, isErro = false) {
+            statusMessageDiv.textContent = texto;
+            statusMessageDiv.style.display = 'block';
+            statusMessageDiv.style.backgroundColor = isErro ? '#ffebee' : '#e8f5e9';
+            statusMessageDiv.style.color = isErro ? '#c62828' : '#2e7d32';
+            setTimeout(() => {
+                statusMessageDiv.style.display = 'none';
+            }, 3500);
+        }
+
+        // Função para carregar e exibir a foto atual (seja padrão ou personalizada)
+        function atualizarExibicaoFoto() {
+            const temPerfil = localStorage.getItem(STORAGE_PERSONALIZADO) === 'true';
+            const fotoSalva = localStorage.getItem(STORAGE_FOTO);
+            
+            // Limpa a área de foto
+            photoArea.innerHTML = '';
+            
+            if (temPerfil && fotoSalva && fotoSalva !== 'null' && fotoSalva !== '') {
+                // Exibe foto personalizada
+                const img = document.createElement('img');
+                img.src = fotoSalva;
+                img.alt = "Foto de perfil";
+                img.className = "profile-photo";
+                photoArea.appendChild(img);
+                
+                // Botão de trocar foto
+                const btnTrocar = document.createElement('button');
+                btnTrocar.textContent = '📷 Trocar foto';
+                btnTrocar.className = 'btn-photo';
+                btnTrocar.style.marginLeft = '10px';
+                btnTrocar.style.backgroundColor = '#ff9800';
+                btnTrocar.onclick = () => abrirSelecaoFoto();
+                photoArea.appendChild(document.createElement('br'));
+                photoArea.appendChild(btnTrocar);
+            } else {
+                // Exibe avatar padrão (visitante)
+                const divAvatar = document.createElement('div');
+                divAvatar.className = 'default-avatar';
+                divAvatar.textContent = '👤';
+                photoArea.appendChild(divAvatar);
+                
+                const btnAdicionar = document.createElement('button');
+                btnAdicionar.textContent = '➕ Adicionar foto';
+                btnAdicionar.className = 'btn-photo';
+                btnAdicionar.onclick = () => abrirSelecaoFoto();
+                photoArea.appendChild(document.createElement('br'));
+                photoArea.appendChild(btnAdicionar);
+            }
+        }
+
+        // Função para abrir seletor de arquivos (escolher foto do computador)
+        function abrirSelecaoFoto() {
+            const inputFile = document.createElement('input');
+            inputFile.type = 'file';
+            inputFile.accept = 'image/jpeg, image/png, image/jpg';
+            inputFile.onchange = (event) => {
+                const file = event.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        fotoBase64 = e.target.result;
+                        // Atualiza visualmente a foto na tela instantaneamente (prévia)
+                        const temPerfil = localStorage.getItem(STORAGE_PERSONALIZADO) === 'true';
+                        if (temPerfil) {
+                            // se já existe perfil, salva a foto imediatamente e atualiza
+                            localStorage.setItem(STORAGE_FOTO, fotoBase64);
+                            mostrarMensagem('✅ Foto atualizada com sucesso!');
+                            carregarPerfil(); // recarrega perfil inteiro para atualizar
+                        } else {
+                            // ainda não salvou o perfil, apenas guardamos na variável temporária
+                            // e mostramos preview
+                            mostrarPreviewFoto(fotoBase64);
+                            mostrarMensagem('📸 Foto escolhida! Agora clique em "Salvar meu perfil" para guardar tudo.');
+                        }
+                        atualizarExibicaoFoto(); // atualiza a interface de foto
+                        // se já existe perfil, atualiza a foto no localStorage novamente
+                        if (localStorage.getItem(STORAGE_PERSONALIZADO) === 'true') {
+                            carregarPerfil();
+                        } else {
+                            // Para perfil não salvo: mostra preview, mas não persiste ainda
+                            if (fotoBase64) {
+                                const previewDiv = photoArea.querySelector('.default-avatar');
+                                if (previewDiv) {
+                                    const imgTemp = document.createElement('img');
+                                    imgTemp.src = fotoBase64;
+                                    imgTemp.className = "profile-photo";
+                                    photoArea.replaceChild(imgTemp, previewDiv);
+                                }
+                            }
+                        }
+                    };
+                    reader.readAsDataURL(file);
+                }
+            };
+            inputFile.click();
+        }
+
+        // Função auxiliar para mostrar preview de foto quando ainda não salvou perfil
+        function mostrarPreviewFoto(fotoTemp) {
+            const avatarElement = photoArea.querySelector('.default-avatar');
+            if (avatarElement) {
+                const imgPreview = document.createElement('img');
+                imgPreview.src = fotoTemp;
+                imgPreview.className = "profile-photo";
+                photoArea.replaceChild(imgPreview, avatarElement);
+            } else {
+                const imgExistente = photoArea.querySelector('img');
+                if (imgExistente && !localStorage.getItem(STORAGE_FOTO)) {
+                    imgExistente.src = fotoTemp;
+                }
+            }
+        }
+
+        // Carregar todos os dados do perfil e preencher os campos
+        function carregarPerfil() {
+            const temPerfil = localStorage.getItem(STORAGE_PERSONALIZADO) === 'true';
+            
+            if (temPerfil) {
+                const nomeSalvo = localStorage.getItem(STORAGE_NOME) || '';
+                const sobreSalvo = localStorage.getItem(STORAGE_SOBRE) || '';
+                nomeInput.value = nomeSalvo;
+                sobreInput.value = sobreSalvo;
+                statusDiv.innerHTML = '✅ Perfil personalizado <span class="badge-visitante">Ativo</span>';
+                statusDiv.style.backgroundColor = '#e0f2e0';
+                // Carregar foto
+                const fotoSalva = localStorage.getItem(STORAGE_FOTO);
+                if (fotoSalva && fotoSalva !== 'null') {
+                    fotoBase64 = fotoSalva;
+                } else {
+                    fotoBase64 = null;
+                }
+                atualizarExibicaoFoto();
+            } else {
+                // Perfil Visitante (padrão)
+                nomeInput.value = '';
+                sobreInput.value = '';
+                statusDiv.innerHTML = '👋 Visitante (sem perfil personalizado) <span class="badge-visitante">Crie seu perfil</span>';
+                statusDiv.style.backgroundColor = '#f5f5f5';
+                fotoBase64 = null;
+                localStorage.removeItem(STORAGE_FOTO);
+                localStorage.removeItem(STORAGE_NOME);
+                localStorage.removeItem(STORAGE_SOBRE);
+                localStorage.setItem(STORAGE_PERSONALIZADO, 'false');
+                atualizarExibicaoFoto();
+            }
+        }
+
+        // Salvar perfil (nome, sobrenome e foto)
+        function salvarPerfil() {
+            let nome = nomeInput.value.trim();
+            const sobre = sobreInput.value.trim();
+            
+            if (nome === "") {
+                mostrarMensagem("⚠️ Por favor, digite pelo menos seu primeiro nome para criar o perfil.", true);
+                return;
+            }
+            
+            // Trata nome: se a pessoa colocou nome e sobrenome, mantemos; não precisa separar
+            // Garantir que o nome tenha pelo menos 2 caracteres
+            if (nome.length < 2) {
+                mostrarMensagem("⚠️ Digite um nome válido (mínimo 2 letras).", true);
+                return;
+            }
+            
+            // Se não tiver foto e o usuário não selecionou nenhuma, mantemos a foto padrão (não salva)
+            // Mas podemos permitir perfil sem foto também. 
+            let fotoParaSalvar = fotoBase64;
+            if (!fotoParaSalvar) {
+                // Verifica se já existia foto salva anteriormente
+                const fotoExistente = localStorage.getItem(STORAGE_FOTO);
+                if (fotoExistente && fotoExistente !== 'null') {
+                    fotoParaSalvar = fotoExistente;
+                } else {
+                    fotoParaSalvar = null;
+                }
+            }
+            
+            // Salvar no localStorage
+            localStorage.setItem(STORAGE_NOME, nome);
+            localStorage.setItem(STORAGE_SOBRE, sobre);
+            if (fotoParaSalvar) {
+                localStorage.setItem(STORAGE_FOTO, fotoParaSalvar);
+            } else {
+                localStorage.removeItem(STORAGE_FOTO);
+            }
+            localStorage.setItem(STORAGE_PERSONALIZADO, 'true');
+            
+            // Atualizar interface
+            carregarPerfil();
+            mostrarMensagem("🎉 Perfil salvo com sucesso! Agora você tem uma identidade no AlfaNet.");
+        }
+        
+        // Resetar perfil (voltar a visitante)
+        function resetarPerfil() {
+            if (confirm("Tem certeza que deseja voltar ao perfil Visitante? Seu nome e foto serão removidos (apenas deste navegador).")) {
+                localStorage.setItem(STORAGE_PERSONALIZADO, 'false');
+                localStorage.removeItem(STORAGE_NOME);
+                localStorage.removeItem(STORAGE_SOBRE);
+                localStorage.removeItem(STORAGE_FOTO);
+                fotoBase64 = null;
+                carregarPerfil();
+                mostrarMensagem("🔄 Perfil resetado para modo Visitante. Você pode criar um novo perfil quando quiser!");
+            }
+        }
+        
+        // Inicializar a página e verificar se já existe perfil salvo anteriormente
+        function inicializarPagina() {
+            // Verifica se existe configuração de personalizado
+            if (localStorage.getItem(STORAGE_PERSONALIZADO) === null) {
+                // Primeira vez, define como falso (visitante)
+                localStorage.setItem(STORAGE_PERSONALIZADO, 'false');
+            }
+            carregarPerfil();
+            
+            // Eventos dos botões
+            btnSalvar.onclick = salvarPerfil;
+            btnResetar.onclick = resetarPerfil;
+        }
+        
+        // Navegação (função compatível com menu)
+        function irPara(pagina) {
+            if (pagina === 'perfil') {
+                // já estamos no perfil
+                mostrarMensagem("Você já está na página de Perfil!", false);
+                return;
+            }
+            if (pagina === 'menu.html') {
+                window.location.href = pagina;
+            }
+
+            if (pagina === 'class.html') {
+                window.location.href = pagina;
+            } 
+
+            if (pagina === 'exercicios.html') {
+                window.location.href = pagina;
+            } 
+
+            if (pagina === 'curiosidades.html') {
+                window.location.href = pagina;
+            }
+        }
+        
+        // Disponibilizar a função globalmente para os botões do menu
+        window.irPara = irPara;
+        
+        // Iniciar tudo quando a página carregar
+        window.addEventListener('DOMContentLoaded', inicializarPagina);
+    </script>
+</body>
+</html>

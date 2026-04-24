@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AlfaNet - Curiosidades</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Arial, Helvetica, sans-serif;
+            background-color: #f5f9f5;
+            color: #333;
+        }
+
+        /* BARRA SUPERIOR */
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #1b5e20;
+            padding: 15px 20px;
+            flex-wrap: wrap;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .logo {
+            color: white;
+            font-size: 24px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .menu {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .menu button {
+            background-color: transparent;
+            border: none;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            padding: 8px 12px;
+            border-radius: 6px;
+            transition: 0.3s;
+            font-weight: 500;
+        }
+
+        .menu button:hover {
+            background-color: #2e7d32;
+            transform: translateY(-2px);
+        }
+
+        /* CONTEÚDO PRINCIPAL */
+        .container {
+            max-width: 1300px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .page-title {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .page-title h1 {
+            color: #1b5e20;
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+        }
+
+        .page-title p {
+            color: #666;
+            font-size: 1.1rem;
+        }
+
+        /* GRADE DE CURIOSIDADES */
+        .curiosities-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 30px;
+            margin-bottom: 50px;
+        }
+
+        /* CARD DE CURIOSIDADE */
+        .curiosity-card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+            overflow: hidden;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+
+        .curiosity-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 30px rgba(27,94,32,0.2);
+            border-color: #4caf50;
+        }
+
+        .curiosity-card.expanded {
+            transform: translateY(0);
+            border-color: #1b5e20;
+            box-shadow: 0 20px 35px rgba(0,0,0,0.15);
+        }
+
+        /* Preview do card */
+        .card-preview {
+            padding: 35px 25px;
+            text-align: center;
+            background: linear-gradient(135deg, #ffffff 0%, #f9fff9 100%);
+        }
+
+        .curiosity-icon {
+            font-size: 3.5rem;
+            margin-bottom: 15px;
+        }
+
+        .curiosity-card h3 {
+            color: #1b5e20;
+            font-size: 1.5rem;
+            margin-bottom: 12px;
+            font-weight: 700;
+        }
+
+        .preview-text {
+            color: #666;
+            font-size: 0.95rem;
+            line-height: 1.4;
+            margin-bottom: 15px;
+            font-style: italic;
+        }
+
+        .curiosity-badge {
+            display: inline-block;
+            background-color: #e8f5e9;
+            color: #2e7d32;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .expand-hint {
+            margin-top: 15px;
+            font-size: 0.75rem;
+            color: #8ba88e;
+        }
+
+        /* Área expandida com o conteúdo completo */
+        .card-expanded {
+            display: none;
+            background: #fafafa;
+            border-top: 1px solid #e0e0e0;
+            padding: 25px;
+        }
+
+        .curiosity-card.expanded .card-expanded {
+            display: block;
+        }
+
+        .full-content {
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .full-content p {
+            margin-bottom: 15px;
+            font-size: 1rem;
+        }
+
+        .full-content strong {
+            color: #1b5e20;
+        }
+
+        .fact-box {
+            background: #e8f5e9;
+            padding: 15px;
+            border-radius: 12px;
+            margin: 15px 0;
+            border-left: 4px solid #1b5e20;
+        }
+
+        .fact-box small {
+            color: #2e7d32;
+            font-weight: bold;
+        }
+
+        .close-btn {
+            display: block;
+            width: 100%;
+            margin-top: 20px;
+            background-color: #ff5722;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+
+        .close-btn:hover {
+            background-color: #e64a19;
+            transform: scale(1.02);
+        }
+
+        /* Scroll reveal */
+        .curiosity-card {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+
+        .curiosity-card.revealed {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Banner motivacional */
+        .motivation-banner {
+            background: linear-gradient(135deg, #1b5e20, #2e7d32);
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            color: white;
+            margin: 40px 0;
+        }
+
+        .motivation-banner h3 {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+        }
+
+        .motivation-banner p {
+            font-size: 1rem;
+            opacity: 0.95;
+        }
+
+        @media (max-width: 768px) {
+            .curiosities-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .page-title h1 {
+                font-size: 1.8rem;
+            }
+            
+            .card-preview {
+                padding: 25px 20px;
+            }
+        }
+
+        .footer-note {
+            text-align: center;
+            padding: 30px 20px 40px;
+            font-size: 0.85rem;
+            color: #8ba88e;
+            border-top: 1px solid #e0f0e0;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="topbar">
+        <div class="logo" onclick="irPara('menu.html')">📚 AlfaNet</div>
+        <div class="menu">
+            <button onclick="irPara('class.html')">Aulas</button>
+            <button onclick="irPara('exercicios.html')">Exercícios</button>
+            <button onclick="irPara('curiosidades')" style="background-color: #2e7d32;">Curiosidades</button>
+            <button onclick="irPara('desempenho')">Desempenho</button>
+            <button onclick="irPara('perfil.html')">Perfil</button>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="page-title">
+            <h1>💡 Sabia que...?</h1>
+            <p>Clique em qualquer card para descobrir curiosidades incríveis sobre leitura, escrita e o cérebro!</p>
+        </div>
+
+        <div class="curiosities-grid" id="curiositiesGrid">
+            <!-- Curiosidade 1 -->
+            <div class="curiosity-card" data-id="1">
+                <div class="card-preview">
+                    <div class="curiosity-icon">🧠</div>
+                    <h3>O cérebro e a leitura</h3>
+                    <div class="preview-text">
+                        "Ler transforma o cérebro de uma forma única..."
+                    </div>
+                    <div class="curiosity-badge">📖 Curiosidade científica</div>
+                    <div class="expand-hint">✨ Clique para saber mais ✨</div>
+                </div>
+                <div class="card-expanded">
+                    <div class="full-content">
+                        <p>📚 <strong>Sabia que?</strong> Quando você aprende a ler, seu cérebro cria novas conexões que nunca existiram antes! A leitura ativa áreas do cérebro responsáveis pela visão, linguagem e memória ao mesmo tempo.</p>
+                        <div class="fact-box">
+                            <small>🔬 DADO CIENTÍFICO</small>
+                            <p>🧠 Cientistas descobriram que aprender a ler aumenta a quantidade de massa cinzenta no cérebro, especialmente no hemisfério esquerdo, responsável pela linguagem.</p>
+                        </div>
+                        <p>💪 Cada letra que você aprende é como um exercício para o seu cérebro. Quanto mais você lê, mais forte e rápido ele fica!</p>
+                    </div>
+                    <button class="close-btn">🔽 Fechar curiosidade</button>
+                </div>
+            </div>
+
+            <!-- Curiosidade 2 -->
+            <div class="curiosity-card" data-id="2">
+                <div class="card-preview">
+                    <div class="curiosity-icon">📜</div>
+                    <h3>Livro mais antigo</h3>
+                    <div class="preview-text">
+                        "Você sabe qual é o livro mais antigo do mundo?"
+                    </div>
+                    <div class="curiosity-badge">📚 História</div>
+                    <div class="expand-hint">✨ Clique para saber mais ✨</div>
+                </div>
+                <div class="card-expanded">
+                    <div class="full-content">
+                        <p>📖 <strong>O livro mais antigo do mundo</strong> que ainda existe é a Bíblia de Gutenberg, impressa em 1455. Mas existem manuscritos muito mais antigos!</p>
+                        <div class="fact-box">
+                            <small>⏳ RECORDE HISTÓRICO</small>
+                            <p>📜 O manuscrito mais antigo encontrado é o "Papiro de Prisse", do Egito Antigo, com mais de 4.000 anos! Ele ensinava conselhos sobre como ser uma boa pessoa.</p>
+                        </div>
+                        <p>✨ Hoje, existem mais de 130 milhões de livros diferentes no mundo. Isso significa que você nunca vai ficar sem algo novo para ler!</p>
+                    </div>
+                    <button class="close-btn">🔽 Fechar curiosidade</button>
+                </div>
+            </div>
+
+            <!-- Curiosidade 3 -->
+            <div class="curiosity-card" data-id="3">
+                <div class="card-preview">
+                    <div class="curiosity-icon">👁️</div>
+                    <h3>Leitura rápida</h3>
+                    <div class="preview-text">
+                        "Seus olhos se movem de forma incrível enquanto lê..."
+                    </div>
+                    <div class="curiosity-badge">👀 Curiosidade visual</div>
+                    <div class="expand-hint">✨ Clique para saber mais ✨</div>
+                </div>
+                <div class="card-expanded">
+                    <div class="full-content">
+                        <p>👀 <strong>Movimentos rápidos</strong> - Enquanto você lê esta frase, seus olhos fazem pequenos saltos chamados "sacadas". Cada salto dura apenas 20 a 40 milésimos de segundo!</p>
+                        <div class="fact-box">
+                            <small>⚡ DADO SURPREENDENTE</small>
+                            <p>Uma pessoa que lê bem faz cerca de 4 a 5 saltos por segundo. Os olhos não se movem suavemente sobre as palavras, eles "pulam" e "pousam" em pontos específicos.</p>
+                        </div>
+                        <p>🎯 Quanto mais você pratica a leitura, mais eficientes esses movimentos se tornam, e você consegue ler mais rápido e com mais facilidade!</p>
+                    </div>
+                    <button class="close-btn">🔽 Fechar curiosidade</button>
+                </div>
+            </div>
+
+            <!-- Curiosidade 4 -->
+            <div class="curiosity-card" data-id="4">
+                <div class="card-preview">
+                    <div class="curiosity-icon">🌍</div>
+                    <h3>Analfabetismo no mundo</h3>
+                    <div class="preview-text">
+                        "Ainda existem milhões de pessoas que não sabem ler..."
+                    </div>
+                    <div class="curiosity-badge">📊 Dados mundiais</div>
+                    <div class="expand-hint">✨ Clique para saber mais ✨</div>
+                </div>
+                <div class="card-expanded">
+                    <div class="full-content">
+                        <p>🌎 <strong>No mundo todo</strong>, cerca de 773 milhões de adultos não sabem ler e escrever. Isso representa 15% da população mundial!</p>
+                        <div class="fact-box">
+                            <small>📈 DADOS UNESCO</small>
+                            <p>👩‍🎓 Mais de 60% das pessoas que não sabem ler são mulheres. Por isso, é tão importante que todas as meninas e mulheres tenham acesso à educação.</p>
+                        </div>
+                        <p>💚 O Brasil tem avançado: a taxa de analfabetismo caiu de 20% em 1990 para 7% em 2020. Você faz parte dessa mudança!</p>
+                    </div>
+                    <button class="close-btn">🔽 Fechar curiosidade</button>
+                </div>
+            </div>
+
+            <!-- Curiosidade 5 -->
+            <div class="curiosity-card" data-id="5">
+                <div class="card-preview">
+                    <div class="curiosity-icon">✏️</div>
+                    <h3>Benefícios da escrita</h3>
+                    <div class="preview-text">
+                        "Escrever à mão faz bem para o cérebro..."
+                    </div>
+                    <div class="curiosity-badge">✍️ Benefícios</div>
+                    <div class="expand-hint">✨ Clique para saber mais ✨</div>
+                </div>
+                <div class="card-expanded">
+                    <div class="full-content">
+                        <p>✍️ <strong>Escrever à mão</strong> ativa áreas do cérebro que o computador não consegue. Pesquisas mostram que aprendemos melhor quando escrevemos à mão!</p>
+                        <div class="fact-box">
+                            <small>🧠 PESQUISA CIENTÍFICA</small>
+                            <p>Estudantes que fazem anotações à mão lembram mais do conteúdo do que quem digita. Isso acontece porque escrever devagar faz o cérebro processar melhor a informação.</p>
+                        </div>
+                        <p>📝 Mesmo na era digital, nunca pare de escrever à mão! Isso fortalece sua memória e criatividade.</p>
+                    </div>
+                    <button class="close-btn">🔽 Fechar curiosidade</button>
+                </div>
+            </div>
+
+            <!-- Curiosidade 6 -->
+            <div class="curiosity-card" data-id="6">
+                <div class="card-preview">
+                    <div class="curiosity-icon">📚</div>
+                    <h3>Leitura reduz estresse</h3>
+                    <div class="preview-text">
+                        "Ler pode ser um ótimo remédio contra o estresse..."
+                    </div>
+                    <div class="curiosity-badge">😌 Bem-estar</div>
+                    <div class="expand-hint">✨ Clique para saber mais ✨</div>
+                </div>
+                <div class="card-expanded">
+                    <div class="full-content">
+                        <p>😌 <strong>Ler reduz o estresse</strong> em até 68%! Pesquisas mostram que apenas 6 minutos de leitura já diminuem a frequência cardíaca e aliviam a tensão muscular.</p>
+                        <div class="fact-box">
+                            <small>📖 ESTUDO DA UNIVERSIDADE DE SUSSEX</small>
+                            <p>A leitura funciona melhor do que ouvir música, tomar chá ou dar um passeio para reduzir o estresse. É uma terapia acessível para todos!</p>
+                        </div>
+                        <p>🎉 Além disso, pessoas que leem regularmente dormem melhor e têm menos chances de desenvolver depressão. Livros são remédios para a alma!</p>
+                    </div>
+                    <button class="close-btn">🔽 Fechar curiosidade</button>
+                </div>
+            </div>
+
+            <!-- Curiosidade 7 -->
+            <div class="curiosity-card" data-id="7">
+                <div class="card-preview">
+                    <div class="curiosity-icon">🎓</div>
+                    <h3>Educação muda vidas</h3>
+                    <div class="preview-text">
+                        "Cada ano de estudo aumenta sua renda..."
+                    </div>
+                    <div class="curiosity-badge">💰 Impacto social</div>
+                    <div class="expand-hint">✨ Clique para saber mais ✨</div>
+                </div>
+                <div class="card-expanded">
+                    <div class="full-content">
+                        <p>💰 <strong>Estudar vale a pena!</strong> Pesquisas mostram que cada ano adicional de estudo aumenta a renda de uma pessoa em até 10% ao longo da vida.</p>
+                        <div class="fact-box">
+                            <small>📊 BANCO MUNDIAL</small>
+                            <p>Pessoas que concluem a alfabetização têm 42% mais chances de conseguir empregos melhores e mais estáveis. A educação é o caminho para uma vida melhor!</p>
+                        </div>
+                        <p>🌟 Além do dinheiro, pessoas que estudam vivem mais, têm mais saúde e participam mais ativamente na comunidade. Invista em você!</p>
+                    </div>
+                    <button class="close-btn">🔽 Fechar curiosidade</button>
+                </div>
+            </div>
+
+            <!-- Curiosidade 8 -->
+            <div class="curiosity-card" data-id="8">
+                <div class="card-preview">
+                    <div class="curiosity-icon">🔤</div>
+                    <h3>Palavra mais longa</h3>
+                    <div class="preview-text">
+                        "Existe uma palavra com 46 letras em português..."
+                    </div>
+                    <div class="curiosity-badge">🏆 Recorde</div>
+                    <div class="expand-hint">✨ Clique para saber mais ✨</div>
+                </div>
+                <div class="card-expanded">
+                    <div class="full-content">
+                        <p>🏆 <strong>A maior palavra da língua portuguesa</strong> é "pneumoultramicroscopicossilicovulcanoconiótico" com 46 letras! Ela descreve uma doença pulmonar.</p>
+                        <div class="fact-box">
+                            <small>📖 CURIOSIDADE LINGUÍSTICA</small>
+                            <p>Em inglês, a maior palavra tem 189.819 letras! É o nome de uma proteína, e leva mais de 3 horas para ser pronunciada completamente.</p>
+                        </div>
+                        <p>😅 Não se preocupe, você não precisa aprender essas palavras enormes. O importante é saber se comunicar bem no dia a dia!</p>
+                    </div>
+                    <button class="close-btn">🔽 Fechar curiosidade</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Banner motivacional -->
+        <div class="motivation-banner">
+            <h3>✨ Você sabia que ler e escrever te torna mais inteligente? ✨</h3>
+            <p>Estudos mostram que pessoas que leem regularmente têm o cérebro até 30% mais ativo! Continue praticando e descubra um mundo novo de possibilidades.</p>
+        </div>
+    </div>
+
+    <div class="footer-note">
+        🌱 Curiosidades baseadas em pesquisas científicas reais. Acredite no poder do conhecimento!
+    </div>
+
+    <script>
+        // Navegação do menu
+        function irPara(pagina) {
+            if (pagina === 'curiosidades') {
+                mostrarMensagem("Você já está na página de Curiosidades!");
+                return;
+            }
+            if (pagina === 'menu.html') {
+                window.location.href = pagina;
+            } else if (pagina === 'perfil.html') {
+                window.location.href = pagina;
+            } else if (pagina === 'class.html') {
+                window.location.href = pagina;
+            } else if (pagina === 'exercicios.html') {
+                window.location.href = pagina;
+            } else {
+                alert("🔜 Funcionalidade em desenvolvimento: " + pagina + "\nEm breve teremos novidades!");
+            }
+        }
+
+        function mostrarMensagem(texto) {
+            const msgDiv = document.createElement('div');
+            msgDiv.textContent = texto;
+            msgDiv.style.position = 'fixed';
+            msgDiv.style.bottom = '20px';
+            msgDiv.style.left = '50%';
+            msgDiv.style.transform = 'translateX(-50%)';
+            msgDiv.style.backgroundColor = '#1b5e20';
+            msgDiv.style.color = 'white';
+            msgDiv.style.padding = '12px 24px';
+            msgDiv.style.borderRadius = '40px';
+            msgDiv.style.fontWeight = 'bold';
+            msgDiv.style.zIndex = '9999';
+            document.body.appendChild(msgDiv);
+            setTimeout(() => {
+                msgDiv.remove();
+            }, 2000);
+        }
+
+        // Fechar curiosidade
+        function fecharCuriosidade(botao) {
+            const card = botao.closest('.curiosity-card');
+            if (card) {
+                card.classList.remove('expanded');
+            }
+        }
+
+        // Configurar cards
+        function setupCuriosityCards() {
+            const cards = document.querySelectorAll('.curiosity-card');
+            
+            cards.forEach(card => {
+                // Clique no card para expandir
+                card.addEventListener('click', function(event) {
+                    if (event.target.classList.contains('close-btn')) {
+                        return;
+                    }
+                    
+                    const isExpanded = card.classList.contains('expanded');
+                    const allExpanded = document.querySelectorAll('.curiosity-card.expanded');
+                    
+                    allExpanded.forEach(expCard => {
+                        if (expCard !== card) {
+                            expCard.classList.remove('expanded');
+                        }
+                    });
+                    
+                    if (!isExpanded) {
+                        card.classList.add('expanded');
+                        setTimeout(() => {
+                            card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                        }, 100);
+                    }
+                });
+                
+                // Configurar botão fechar
+                const closeBtn = card.querySelector('.close-btn');
+                if (closeBtn) {
+                    closeBtn.addEventListener('click', function(event) {
+                        event.stopPropagation();
+                        fecharCuriosidade(this);
+                    });
+                }
+            });
+        }
+
+        // Scroll reveal
+        function revealCardsOnScroll() {
+            const cards = document.querySelectorAll('.curiosity-card');
+            const windowHeight = window.innerHeight;
+            
+            cards.forEach(card => {
+                const cardTop = card.getBoundingClientRect().top;
+                if (cardTop < windowHeight - 80) {
+                    card.classList.add('revealed');
+                }
+            });
+        }
+
+        // Inicialização
+        function init() {
+            setupCuriosityCards();
+            
+            setTimeout(() => {
+                revealCardsOnScroll();
+            }, 100);
+            
+            window.addEventListener('scroll', revealCardsOnScroll);
+            window.addEventListener('resize', revealCardsOnScroll);
+            
+            window.irPara = irPara;
+        }
+        
+        window.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>

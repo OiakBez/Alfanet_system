@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AlfaNet</title>
+
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, Helvetica, sans-serif;
+            background-color: #ffffff;
+            color: #333333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            text-align: center;
+        }
+
+        .container {
+            max-width: 500px;
+            padding: 20px;
+        }
+
+        /* ANIMAÇÃO BASE */
+        .fade-up {
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeUp 1s ease forwards;
+        }
+
+        /* delays diferentes */
+        .delay-1 { animation-delay: 0.2s; }
+        .delay-2 { animation-delay: 0.4s; }
+        .delay-3 { animation-delay: 0.6s; }
+
+        @keyframes fadeUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h1 {
+            font-size: 48px;
+            color: #1b5e20;
+            margin-bottom: 20px;
+        }
+
+        p {
+            font-size: 18px;
+            color: #666666;
+            margin-bottom: 30px;
+        }
+
+        .btn {
+            background-color: #1b5e20;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 18px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .btn:hover {
+            background-color: #2e7d32;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <h1 class="fade-up delay-1">AlfaNet</h1>
+
+        <p class="fade-up delay-2">
+            Aprender a ler e escrever transforma vidas.  
+            Aqui, cada passo é um avanço rumo ao seu futuro.
+        </p>
+
+        <button class="btn fade-up delay-3" onclick="irParaMenu('menu.html')">COMEÇAR</button>
+    </div>
+
+    <script>
+        function irParaMenu(pagina) {
+            window.location.href = pagina;
+        }
+    </script>
+
+</body>
+</html>
